@@ -21,13 +21,13 @@ jobs:
 
       - name: Build Docker image
         run: |
-          IMAGE_TAG=ghcr.io/${{ github.repository | toLower }}/app:latest
+          IMAGE_TAG="ghcr.io/$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')/app:latest"
           docker build -t $IMAGE_TAG .
 
       - name: Scan image with Trivy
         uses: aquasecurity/trivy-action@0.20.0
         with:
-          image-ref: ${{ github.repository | toLower }}/app:latest
+          image-ref: ${{ github.repository }}
           vuln-type: 'os,library'
           severity: 'HIGH,CRITICAL'
           exit-code: '1'
@@ -35,5 +35,5 @@ jobs:
       - name: Push image to GHCR
         if: success()
         run: |
-          IMAGE_TAG=ghcr.io/${{ github.repository | toLower }}/app:latest
+          IMAGE_TAG="ghcr.io/$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')/app:latest"
           docker push $IMAGE_TAG
